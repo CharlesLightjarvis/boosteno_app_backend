@@ -24,6 +24,11 @@ class User extends Authenticatable
         'cni',
         'email',
         'password',
+        'status',
+        'phone_number',
+        'photo',
+        'address',
+        'joinedDate',
         'uuid'
     ];
 
@@ -50,18 +55,18 @@ class User extends Authenticatable
         ];
     }
 
-    protected static function boot()
-    {
-        parent::boot();
+    // protected static function boot()
+    // {
+    //     parent::boot();
 
-        // Attribuer automatiquement un UUID avant la création de l'utilisateur
-        static::creating(function ($user) {
-            if (empty($user->uuid)) {
-                $prefix = $user->determinePrefixBasedOnRole(); // Détermine le préfixe en fonction du rôle
-                $user->uuid = $user->generateUuid($prefix); // Générer l'UUID unique basé sur le rôle
-            }
-        });
-    }
+    //     // Attribuer automatiquement un UUID avant la création de l'utilisateur
+    //     static::creating(function ($user) {
+    //         if (empty($user->uuid)) {
+    //             $prefix = $user->determinePrefixBasedOnRole(); // Détermine le préfixe en fonction du rôle
+    //             $user->uuid = $user->generateUuid($prefix); // Générer l'UUID unique basé sur le rôle
+    //         }
+    //     });
+    // }
 
     // Méthode pour déterminer le préfixe en fonction du rôle
     public function determinePrefixBasedOnRole()

@@ -21,7 +21,9 @@ Route::prefix('v1/public')->group(function () {
 
 Route::prefix('v1/admin')->group(function () {
     Route::resource('/users', UserController::class);
-    Route::resource('/roles', RoleController::class);
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::resource('/roles', RoleController::class);
+    });
 });
 
 // Route::post('/login', [AuthController::class, 'login']);

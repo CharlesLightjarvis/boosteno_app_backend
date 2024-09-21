@@ -22,39 +22,39 @@ class UserRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255|regex:/^[^\d]+$/', // Ajout de la règle regex pour n'autoriser que les lettres de a à z et A à Z',
+            'name' => 'required|string|max:255|regex:/^[^\d]+$/',
             'surname' => 'required|string|max:255|regex:/^[^\d]+$/',
-            'cni' => 'required|string|max:255|unique:users,cni,' . $this->route('user'), // Ajout de la règle unique pour vérifier que l'email est unique et ne correspond pas à l'email du user courant'
-            'email' => 'required|string|email|max:255|unique:users,email,' . $this->route('user'), // Ajout de la règle unique pour vérifier que l'email est unique et ne correspond pas à l'email du user courant
-            'role' => 'required|exists:roles,id',
-            // 'password' => 'required|string|min:8', // Ajout des règles pour le mot de passe
+            'cni' => 'required|string|max:255|unique:users,cni,' . $this->route('user'),
+            'email' => 'required|string|email|max:255|unique:users,email,' . $this->route('user'),
+            'phone_number' => 'required|string|max:255|unique:users,phone_number,' . $this->route('user'),
+            'address' => 'required|string',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'joinedDate' => 'required|date',
+            'role' => 'required|exists:roles,name',
         ];
     }
 
-    public function messages()
+    public function messages(): array
     {
         return [
             'name.required' => 'Le champ nom est obligatoire.',
-            'name.string' => 'Le champ nom doit être une chaîne de caractères.',
-            'name.max' => 'Le champ nom ne doit pas dépasser 255 caractères.',
-            'name.regex' => 'Le champ nom ne doit contenir que des lettres de a à z et A à Z.',
-            'email.required' => 'Le champ email est obligatoire.',
-            'email.string' => 'Le champ email doit être une chaîne de caractères.',
-            'email.email' => 'Le champ email doit être une adresse email valide.',
-            'email.max' => 'Le champ email ne doit pas dépasser 255 caractères.',
-            'email.unique' => 'Cet email est déjà utilisé.',
-            'role.required' => 'Le champ rôle est obligatoire.',
-            'role.exists' => 'Le rôle sélectionné n\'existe pas.',
-            // 'password.required' => 'Le champ mot de passe est obligatoire.',
-            // 'password.string' => 'Le champ mot de passe doit être une chaîne de caractères.',
-            // 'password.min' => 'Le champ mot de passe doit contenir au moins 8 caractères.',
+            'surname.required' => 'Le champ prénom est obligatoire.',
             'cni.required' => 'Le champ CNI est obligatoire.',
-            'cni.string' => 'Le champ CNI doit être une chaîne de caractères.',
-            'cni.max' => 'Le champ CNI ne doit pas dépasser 255 caractères.',
+            'email.required' => 'Le champ email est obligatoire.',
+            'phone_number.required' => 'Le champ numéro de téléphone est obligatoire.',
+            'address.required' => 'Le champ adresse est obligatoire.',
+            'joinedDate.required' => 'Le champ date d\'adhésion est obligatoire.',
+            'role.required' => 'Le champ rôle est obligatoire.',
+            'name.regex' => 'Le champ nom ne doit contenir que des lettres.',
+            'surname.regex' => 'Le champ prénom ne doit contenir que des lettres.',
             'cni.unique' => 'Cette CNI est déjà utilisée.',
-            'surname.required' => 'Le champ nom est obligatoire.',
-            'surname.string' => 'Le champ nom doit être une chaîne de caractères.',
-            'surname.max' => 'Le champ nom ne doit pas dépasser 255 caractères.',
+            'email.unique' => 'Cet email est déjà utilisé.',
+            'phone_number.unique' => 'Ce numéro de téléphone est déjà utilisé.',
+            'role.exists' => 'Le rôle sélectionné n\'existe pas.',
+            'photo.image' => 'Le champ photo doit être une image.',
+            'photo.mimes' => 'Le champ photo doit être une image de type jpeg, png, jpg, gif, svg.',
+            'photo.max' => 'Le champ photo ne doit pas dépasser 2048 Ko.',
+            'joinedDate.date' => 'Le champ date d\'adhésion doit être une date valide.',
         ];
     }
 }
