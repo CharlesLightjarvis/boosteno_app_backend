@@ -28,11 +28,11 @@ class RoleController extends BaseController
     /**
      * Store a newly created resource in storage.
      */
-    // public function store(RoleRequest $request)
-    // {
-    //     $role = $this->roleService->createRole($request->validated());
-    //     return $this->sendResponse($role, "Role created successfully");
-    // }
+    public function store(RoleRequest $request)
+    {
+        $role = $this->roleService->createRole($request->validated());
+        return $this->sendResponse($role, "Role created successfully");
+    }
 
     /**
      * Display the specified resource.
@@ -46,11 +46,11 @@ class RoleController extends BaseController
     /**
      * Update the specified resource in storage.
      */
-    // public function update(RoleRequest $request, $id)
-    // {
-    //     $role = $this->roleService->updateRole($request->validated(), $id);
-    //     return $this->sendResponse($role, "Role updated successfully");
-    // }
+    public function update(RoleRequest $request, $id)
+    {
+        $role = $this->roleService->updateRole($request->validated(), $id);
+        return $this->sendResponse($role, "Role updated successfully");
+    }
 
     /**
      * Remove the specified resource from storage.

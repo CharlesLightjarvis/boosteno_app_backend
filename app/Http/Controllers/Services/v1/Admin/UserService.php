@@ -88,13 +88,19 @@ class UserService
 
     public function updateUser($data, $id)
     {
+        DB::beginTransaction(); // Démarrer une transaction
+
         try {
+            // Log les données reçues pour débogage
+            Log::info('Données reçues pour mise à jour', $data);
+
+            // Trouver l'utilisateur par ID ou renvoyer une erreur
             $user = User::findOrFail($id);
 
             // Vérifiez si le rôle a changé
-            $roleChanged = $data['role'] !== $user->getRoleNames()->first();
+            $roleChanged = isset($data['role']) && $data['role'] !== $user->getRoleNames()->first();
 
-            // Valider les données à mettre à jour
+            // Initialiser les données à mettre à jour
             $updateData = [
                 'cni' => $data['cni'],
                 'name' => $data['name'],
@@ -102,16 +108,17 @@ class UserService
                 'email' => $data['email'],
                 'phone_number' => $data['phone_number'],
                 'address' => $data['address'],
-                'photo' => $data['photo'],
                 'joinedDate' => $data['joinedDate'],
             ];
 
-
-
-            // Si un nouveau mot de passe est fourni, le crypter et l'ajouter aux données à mettre à jour
-            if (!empty($data['password'])) {
-                $updateData['password'] = bcrypt($data['password']);
+            // Gestion de la photo : remplacer si une nouvelle est fournie
+            if (isset($data['photo']) && $data['photo']->isValid()) {
+                $path = $data['photo']->store('photos', 'public');
+                $updateData['photo'] = $path;
             }
+
+            // Log avant la mise à jour de l'utilisateur
+            Log::info('Données mises à jour pour l\'utilisateur', $updateData);
 
             // Mettre à jour les données de l'utilisateur
             $user->update($updateData);
@@ -126,12 +133,20 @@ class UserService
                 $user->update(['uuid' => $user->generateUuid($prefix)]);
             }
 
-            return new UserResource($user);
+            DB::commit(); // Confirmer la transaction
+
+            return new UserResource($user); // Retourner les informations mises à jour sous forme de ressource JSON
         } catch (\Exception $e) {
+            DB::rollBack(); // Annuler la transaction en cas d'erreur
+
+            // Log l'erreur pour débogage
+            Log::error('Erreur lors de la mise à jour de l\'utilisateur : ' . $e->getMessage());
+
             // Retourner une réponse d'erreur
             return response()->json(['error' => 'User update failed', 'message' => $e->getMessage()], 500);
         }
     }
+
 
 
     public function deleteUser($id)

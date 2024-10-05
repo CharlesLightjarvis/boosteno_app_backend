@@ -3,14 +3,22 @@
 namespace App\Http\Requests\Admin;
 
 use App\Http\Requests\BaseRequest;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
-class RoleRequest extends BaseRequest
+class PermissionToRoleRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
+        $user = Auth::user();
+
+        if (!$user || !$user->hasRole('administrateur')) {
+            return false;
+        }
+
         return true;
     }
 
@@ -22,9 +30,8 @@ class RoleRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|regex:/^[^\d]+$/|max:255' . $this->route('user'),
-            'permissions' => 'array',
-            'permissions.*' => 'exists:permissions,id', // Vérifie que chaque permission existe
+            'role_id' => 'required|exists:roles,id',
+            'permission_id' => 'required|exists:permissions,id',
         ];
     }
 }

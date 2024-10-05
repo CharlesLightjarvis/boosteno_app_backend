@@ -14,22 +14,25 @@ class RolePermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        // Création des permissions
+        // Création des permissions avec descriptions
         $permissions = [
-            'manage users', // Par exemple pour l'admin
-            'manage courses', // Par exemple pour l'admin et teacher
-            'view courses',   // Pour le student
-            'create assignments', // Pour le teacher
-            'grade assignments',  // Pour le teacher
-            'submit assignments', // Pour le student
+            ['name' => 'manage users', 'description' => 'Gérer les utilisateurs du système'],
+            ['name' => 'manage courses', 'description' => 'Gérer les cours et leur contenu'],
+            ['name' => 'view courses', 'description' => 'Voir les cours disponibles'],
+            ['name' => 'create assignments', 'description' => 'Créer des devoirs pour les étudiants'],
+            ['name' => 'grade assignments', 'description' => 'Noter les devoirs soumis par les étudiants'],
+            ['name' => 'submit assignments', 'description' => 'Soumettre des devoirs pour évaluation'],
         ];
 
-        // Seed des permissions
+        // Seed des permissions avec descriptions
         foreach ($permissions as $permission) {
-            Permission::firstOrCreate(['name' => $permission]);
+            Permission::firstOrCreate(
+                ['name' => $permission['name']],
+                ['description' => $permission['description']]
+            );
         }
 
-        // Création des rôles
+        // Création des rôles avec leurs permissions associées
         $roles = [
             'admin' => ['manage users', 'manage courses', 'view courses'],
             'teacher' => ['manage courses', 'create assignments', 'grade assignments'],

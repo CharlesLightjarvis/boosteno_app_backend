@@ -6,6 +6,7 @@ use App\Http\Controllers\BaseController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Services\v1\Admin\UserService;
 use App\Http\Requests\Admin\UserRequest;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class UserController extends BaseController
@@ -59,5 +60,11 @@ class UserController extends BaseController
     {
         $user = $this->userService->deleteUser($id);
         return $this->sendResponse($user, "User deleted successfully");
+    }
+
+    public function getTeachers()
+    {
+        $teachers = User::role('teacher')->get();
+        return $this->sendResponse($teachers, "Teachers retrieved successfully");
     }
 }

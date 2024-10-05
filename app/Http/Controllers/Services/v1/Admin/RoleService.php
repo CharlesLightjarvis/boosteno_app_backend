@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Services\v1\Admin;
 
 use App\Http\Resources\v1\Admin\RoleResource;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 
 class RoleService
@@ -22,39 +23,45 @@ class RoleService
 
     public function createRole($data)
     {
-        // DB::beginTransaction();
-        // try {
-        //     $role = Role::create(['name' => $data['name']]);
+        DB::beginTransaction();
+        try {
+            $role = Role::create([
+                'name' => $data['name'],
+                'guard_name' => 'web'
+            ]);
 
-        //     if (isset($data['permissions'])) {
-        //         $role->syncPermissions($data['permissions']);
-        //     }
+            if (isset($data['permissions'])) {
+                $role->syncPermissions($data['permissions']);
+            }
 
-        //     DB::commit();
-        //     return new RoleResource($role);
-        // } catch (\Exception $e) {
-        //     DB::rollBack();
-        //     throw $e;
-        // }
+            DB::commit();
+            return new RoleResource($role);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 
     public function updateRole($data, $id)
     {
-        // $role = Role::findOrFail($id);
-        // DB::beginTransaction();
-        // try {
-        //     $role->update(['name' => $data['name']]);
+        $role = Role::findOrFail($id);
+        DB::beginTransaction();
+        try {
+            $role->update([
+                'name' => $data['name'],
+                'guard_name' => 'web'
+            ]);
 
-        //     if (isset($data['permissions'])) {
-        //         $role->syncPermissions($data['permissions']);
-        //     }
+            if (isset($data['permissions'])) {
+                $role->syncPermissions($data['permissions']);
+            }
 
-        //     DB::commit();
-        //     return new RoleResource($role);
-        // } catch (\Exception $e) {
-        //     DB::rollBack();
-        //     throw $e;
-        // }
+            DB::commit();
+            return new RoleResource($role);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 
     public function deleteRole($id)

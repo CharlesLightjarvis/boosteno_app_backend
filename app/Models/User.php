@@ -55,18 +55,26 @@ class User extends Authenticatable
         ];
     }
 
-    // protected static function boot()
-    // {
-    //     parent::boot();
+    /**
+     * Relation avec les classes enseignées (un utilisateur avec rôle enseignant).
+     */
+    public function teacherClasses()
+    {
+        return $this->hasMany(Classe::class, 'user_id')->whereHas('roles', function ($query) {
+            $query->where('name', 'teacher');
+        });
+    }
 
-    //     // Attribuer automatiquement un UUID avant la création de l'utilisateur
-    //     static::creating(function ($user) {
-    //         if (empty($user->uuid)) {
-    //             $prefix = $user->determinePrefixBasedOnRole(); // Détermine le préfixe en fonction du rôle
-    //             $user->uuid = $user->generateUuid($prefix); // Générer l'UUID unique basé sur le rôle
-    //         }
-    //     });
-    // }
+    /**
+     * Relation avec les classes auxquelles l'utilisateur (étudiant) est inscrit.
+     */
+    public function studentClasses()
+    {
+        return $this->belongsToMany(Classe::class, 'classe_user', 'user_id', 'classe_id')
+            ->whereHas('roles', function ($query) {
+                $query->where('name', 'student');
+            });
+    }
 
     // Méthode pour déterminer le préfixe en fonction du rôle
     public function determinePrefixBasedOnRole()
