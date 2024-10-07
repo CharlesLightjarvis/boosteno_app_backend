@@ -69,7 +69,6 @@ class ClasseService
 
         return new ClasseResource($classe->load(['teacher', 'students', 'levels']));
     }
-
     /**
      * Supprimer une classe.
      */

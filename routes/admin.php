@@ -13,6 +13,7 @@ Route::prefix('v1/admin')->group(function () {
     Route::resource('/classes', ClasseController::class);
     Route::post('/classes/students/add', [ClasseController::class, 'addStudentsToClasse']);
     Route::delete('/classes/students/remove', [ClasseController::class, 'removeStudentsFromClasse']);
+    Route::get('/classes/{level}/students/available', [ClasseController::class, 'studentsNotSameLevelAssign']);
 
     Route::get('/teachers', [UserController::class, 'getTeachers']);
     Route::get('/levels', [LevelController::class, 'index']);

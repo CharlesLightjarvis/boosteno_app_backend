@@ -10,6 +10,7 @@ use App\Models\Classe;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ClasseController extends BaseController
 {
@@ -110,5 +111,47 @@ class ClasseController extends BaseController
 
         // Retourner la classe mise à jour avec les étudiants
         return $this->sendResponse(new ClasseResource($classe->load(['teacher', 'students', 'levels'])), "Étudiants retirés de la classe avec succès");
+    }
+
+    // public function studentsNotSameLevelAssign($level)
+    // {
+    //     // Récupère tous les IDs des classes associées à ce niveau
+    //     $classesWithLevel = DB::table('classe_level')
+    //         ->where('level_id', $level)
+    //         ->pluck('classe_id'); // Récupère les IDs des classes de ce niveau
+
+    //     // Récupère tous les IDs des étudiants déjà assignés à ces classes
+    //     $assignedStudents = DB::table('classe_user')
+    //         ->whereIn('classe_id', $classesWithLevel)
+    //         ->pluck('user_id') // Récupère les IDs des étudiants assignés
+    //         ->unique() // Évite les doublons
+    //         ->toArray(); // Convertit en tableau
+
+    //     // Récupère les étudiants qui ne sont pas encore assignés à ces classes
+    //     return User::whereNotIn('id', $assignedStudents)
+    //         ->whereHas('roles', function ($query) {
+    //             $query->where('name', 'student');
+    //         })
+    //         ->get();
+    // }
+
+    public function studentsNotSameLevelAssign($level)
+    {
+        // Récupère les étudiants qui ne sont pas assignés aux classes du niveau donné
+        $studentsNotInLevel = User::whereHas('roles', function ($query) {
+            $query->where('name', 'student');
+        })
+            ->whereNotIn('id', function ($query) use ($level) {
+                $query->select('user_id')
+                    ->from('classe_user')
+                    ->whereIn('classe_id', function ($subQuery) use ($level) {
+                        $subQuery->select('classe_id')
+                            ->from('classe_level')
+                            ->where('level_id', $level);
+                    });
+            })
+            ->get();
+
+        return $studentsNotInLevel;
     }
 }
