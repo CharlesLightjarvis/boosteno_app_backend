@@ -74,4 +74,9 @@ class Classe extends Model
     {
         return $this->belongsToMany(Level::class, 'classe_level', 'classe_id', 'level_id');
     }
+
+    public function courses()
+    {
+        return $this->belongsToMany(Course::class);
+    }
 }
